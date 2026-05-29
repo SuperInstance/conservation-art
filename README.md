@@ -73,3 +73,5 @@ All output saved to `output/` as PNG files.
 ## License
 
 MIT
+
+Part of the [SuperInstance OpenConstruct](https://github.com/SuperInstance/OpenConstruct) ecosystem.
