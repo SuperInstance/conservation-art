@@ -4,13 +4,8 @@ This is intentionally minimal. Real coverage is added per-fix in sibling
 test modules. It must FAIL (not skip) if the package is broken.
 """
 import os
-import sys
 
 import numpy as np
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 
 def test_package_imports():
@@ -32,8 +27,7 @@ def test_laplacian_basic_runs():
 
 
 def test_generate_module_importable():
-    # generate.py uses a relative sys.path insert; import it as a module path.
     import importlib.util
     spec = importlib.util.spec_from_file_location(
-        "generate", os.path.join(ROOT, "generate.py"))
+        "generate", os.path.join(os.path.dirname(os.path.dirname(__file__)), "generate.py"))
     assert spec is not None and spec.loader is not None

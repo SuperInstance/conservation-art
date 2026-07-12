@@ -2,16 +2,9 @@
 
 These spot-check claims against known-closed-form results.
 """
-import os
-import sys
 import warnings
 
 import numpy as np
-import pytest
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 from src.graph_utils import (laplacian, conservation_ratio, spectral_decomposition)
 

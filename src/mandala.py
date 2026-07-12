@@ -3,13 +3,11 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, FancyArrowPatch
-from matplotlib.collections import LineCollection
 import colorsys
 
-from .graph_utils import (build_graph, spectral_decomposition, conservation_ratio,
+from .graph_utils import (spectral_decomposition, conservation_ratio,
                            random_graph, musical_tradition_graph)
-from .colors import spectral_palette, harmonic_gradient
+from .colors import spectral_palette
 
 
 def generate_mandala(A, title="Spectral Mandala", filename="mandala.png",

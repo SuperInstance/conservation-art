@@ -1,13 +1,6 @@
 """Tests for src.colors color/palette logic."""
-import os
-import sys
-
 import numpy as np
 import pytest
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 from src.colors import (conservation_colormap, spectral_palette,
                         harmonic_gradient, tradition_colors, hex_to_rgb)

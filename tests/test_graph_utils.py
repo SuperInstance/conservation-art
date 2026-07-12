@@ -1,16 +1,11 @@
 """Tests for spectral graph utilities in src.graph_utils."""
-import os
+import subprocess
 import sys
 
 import numpy as np
 import pytest
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
-
-from src.graph_utils import (laplacian, conservation_ratio, spectral_decomposition,
-                             random_graph, musical_tradition_graph, build_graph)
+from src.graph_utils import (random_graph, musical_tradition_graph)
 
 
 # --------------------------- musical_tradition_graph ---------------------------
@@ -20,9 +15,7 @@ TRADITIONS = ['western', 'gamelan', 'indian', 'jazz', 'african']
 
 def _run_in_subprocess(snippet):
     """Run a code snippet in a fresh Python process and capture its stdout."""
-    import subprocess
-    cmd = [sys.executable, '-c',
-           'import sys; sys.path.insert(0, %r)\n' % ROOT + snippet]
+    cmd = [sys.executable, '-c', snippet]
     out = subprocess.check_output(cmd, text=True)
     return out.strip()
 

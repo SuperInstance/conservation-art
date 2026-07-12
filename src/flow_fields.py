@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 import colorsys
 
-from .graph_utils import (spectral_decomposition, conservation_ratio, laplacian,
+from .graph_utils import (spectral_decomposition, conservation_ratio,
                            random_graph, musical_tradition_graph)
 from .colors import harmonic_gradient
 
@@ -41,8 +41,7 @@ def generate_flow_field(A, title="Laplacian Flow", filename="flow.png",
     
     # Define flow field from Laplacian eigenvectors
     # Use higher eigenvectors for swirling flow
-    L = laplacian(A)
-    
+
     def flow_field(px, py):
         """Compute flow direction at point (px, py) from graph nodes."""
         dx, dy = 0.0, 0.0

@@ -4,10 +4,8 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
-import colorsys
 
-from .graph_utils import (spectral_decomposition, conservation_ratio, laplacian,
-                           random_graph, musical_tradition_graph)
+from .graph_utils import (spectral_decomposition, conservation_ratio, random_graph)
 
 
 def generate_heatmap(A, title="Conservation Heat Map", filename="heatmap.png",
@@ -68,8 +66,8 @@ def generate_heatmap(A, title="Conservation Heat Map", filename="heatmap.png",
     fig, ax = plt.subplots(figsize=(size, size), facecolor='#0a0a12')
     ax.set_facecolor('#0a0a12')
     
-    im = ax.imshow(grid, cmap=cmap, interpolation='bilinear',
-                   extent=[-1, 1, -1, 1], vmin=0, vmax=1.5)
+    ax.imshow(grid, cmap=cmap, interpolation='bilinear',
+              extent=[-1, 1, -1, 1], vmin=0, vmax=1.5)
     
     # Overlay graph structure
     if vecs.shape[1] >= 3:

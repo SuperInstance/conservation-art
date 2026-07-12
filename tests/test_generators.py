@@ -6,15 +6,10 @@ written to disk. A blank or missing file -> the test fails. This is the
 guard against 'fake-green' CI where tests pass without exercising output.
 """
 import os
-import sys
 
 import numpy as np
 import pytest
 from PIL import Image
-
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 from src.graph_utils import random_graph
 

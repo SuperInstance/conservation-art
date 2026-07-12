@@ -3,12 +3,10 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, Polygon, FancyArrowPatch
-from matplotlib.collections import PatchCollection, LineCollection
-import colorsys
+from matplotlib.patches import Polygon
+from matplotlib.collections import LineCollection
 
-from .graph_utils import (spectral_decomposition, conservation_ratio, laplacian,
-                           musical_tradition_graph)
+from .graph_utils import (spectral_decomposition, musical_tradition_graph)
 from .colors import tradition_colors, hex_to_rgb
 
 
@@ -227,7 +225,6 @@ def _draw_tribal(ax, A, vals, vecs, palette, n):
     nx, ny = _node_positions(vals, vecs, actual_n)
     
     # Bold circular patterns
-    theta = np.linspace(0, 2 * np.pi, 100)
     for layer in range(min(4, len(vals))):
         ev = vals[layer]
         r = 0.3 + 0.25 * layer

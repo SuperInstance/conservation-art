@@ -3,13 +3,10 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
 import colorsys
 
 from .graph_utils import (spectral_decomposition, conservation_ratio,
                            random_graph, musical_tradition_graph)
-from .colors import spectral_palette
 
 
 def generate_landscape(A, title="Eigenvalue Landscape", filename="landscape.png",
@@ -71,7 +68,8 @@ def generate_landscape(A, title="Eigenvalue Landscape", filename="landscape.png"
     # Plot graph nodes as scatter
     node_z = np.array([conservation_ratio(A, vecs[:, i]) for i in range(min(3, vecs.shape[1]))])
     node_z_avg = np.full(n, np.mean(node_z))
-    ax.scatter(x, y, node_z_avg, c='white', s=20, alpha=0.8, zorder=10, edgecolors='cyan', linewidth=0.5)
+    ax.scatter(x, y, node_z_avg, c='white', s=20, alpha=0.8, zorder=10,
+               edgecolors='cyan', linewidth=0.5)
     
     # Draw graph edges
     for i in range(n):
