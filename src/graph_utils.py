@@ -102,8 +102,18 @@ def random_graph(n, graph_type='erdos_renyi', p=0.3):
 
 
 def musical_tradition_graph(tradition, n=20):
-    """Generate graphs that mimic properties of different musical traditions."""
-    np.random.seed(hash(tradition) % 2**31)
+    """Generate graphs that mimic properties of different musical traditions.
+
+    The tradition name is hashed deterministically (independent of Python's
+    per-process hash randomization) so the same tradition yields the same
+    graph across runs and machines.
+    """
+    # NOTE: do not use the builtin hash() here — CPython randomizes str hashes
+    # per process (PYTHONHASHSEED), which would make output non-reproducible.
+    seed = 0
+    for ch in tradition:
+        seed = (seed * 131 + ord(ch)) & 0x7FFFFFFF
+    np.random.seed(seed)
     
     if tradition == 'western':
         # Structured, hierarchical - Barabasi-Albert with high clustering
