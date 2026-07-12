@@ -76,11 +76,21 @@ def test_random_graph_basic_invariants(gtype):
     assert np.all(np.diag(A) == 0)
 
 
-def test_grid_graph_is_perfect_square_size():
-    # grid truncates to a square; document & enforce that contract.
-    A = random_graph(30, 'grid', p=0.3)
-    side = int(np.sqrt(30))
-    assert A.shape == (side * side, side * side)
+def test_random_graph_honors_requested_size():
+    # Regression: the grid path used to silently truncate to floor(sqrt(n))^2,
+    # returning fewer nodes than requested (e.g. 16 for n=20). Every graph type
+    # must now return exactly n nodes.
+    for n in [7, 20, 30, 36, 50]:
+        for gtype in ['erdos_renyi', 'small_world', 'barabasi_albert', 'grid']:
+            A = random_graph(n, gtype, p=0.3)
+            assert A.shape == (n, n), f"{gtype}(n={n}) -> {A.shape}"
+
+
+def test_grid_graph_has_internal_lattice_edges():
+    # A grid must actually contain grid-style 4-neighbor edges.
+    A = random_graph(25, 'grid', p=0.3)
+    # Interior corner node 6 (row 1, col 1 of a 5x5) should connect to 4 neighbors.
+    assert A[6].sum() == 4
 
 
 def test_barabasi_albert_is_connected():

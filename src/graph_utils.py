@@ -93,9 +93,11 @@ def random_graph(n, graph_type='erdos_renyi', p=0.3):
                 degrees[i] += 1
                 degrees[t] += 1
     elif graph_type == 'grid':
-        side = int(np.sqrt(n))
-        n = side * side
-        A = np.zeros((n, n))
+        # Build a square lattice on ceil(sqrt(n)) nodes per side, then trim to
+        # exactly n nodes so the returned matrix honors the requested size.
+        side = int(np.ceil(np.sqrt(n)))
+        total = side * side
+        A = np.zeros((total, total))
         for i in range(side):
             for j in range(side):
                 idx = i * side + j
@@ -105,6 +107,7 @@ def random_graph(n, graph_type='erdos_renyi', p=0.3):
                 if j + 1 < side:
                     A[idx, i * side + j + 1] = 1
                     A[i * side + j + 1, idx] = 1
+        A = A[:n, :n]
     return A
 
 
@@ -148,12 +151,14 @@ def musical_tradition_graph(tradition, n=20):
     elif tradition == 'african':
         # Polyrhythmic, interconnected - grid-like with diagonal connections
         A = random_graph(n, 'grid', p=0.3)
-        side = int(np.sqrt(n))
+        side = int(np.ceil(np.sqrt(n)))
         for i in range(side - 1):
             for j in range(side - 1):
                 idx = i * side + j
-                A[idx, (i + 1) * side + j + 1] = 1
-                A[(i + 1) * side + j + 1, idx] = 1
+                tgt = (i + 1) * side + (j + 1)
+                if idx < n and tgt < n:
+                    A[idx, tgt] = 1
+                    A[tgt, idx] = 1
     else:
         A = random_graph(n, 'erdos_renyi', p=0.25)
     
