@@ -11,11 +11,18 @@ def build_graph(adj_matrix):
 
 
 def laplacian(A):
-    """Compute normalized Laplacian: L = I - D^{-1/2} A D^{-1/2}."""
+    """Compute normalized Laplacian: L = I - D^{-1/2} A D^{-1/2}.
+
+    Isolated nodes (degree 0) are handled safely: their normalized
+    Laplacian row/column is the identity (diagonal 1, off-diagonal 0),
+    which is the standard convention. No divide-by-zero is emitted.
+    """
     d = A.sum(axis=1)
-    d_inv_sqrt = np.where(d > 0, 1.0 / np.sqrt(d), 0)
-    D_inv_sqrt = np.diag(d_inv_sqrt)
     n = A.shape[0]
+    d_inv_sqrt = np.zeros(n, dtype=np.float64)
+    nonzero = d > 0
+    d_inv_sqrt[nonzero] = 1.0 / np.sqrt(d[nonzero])
+    D_inv_sqrt = np.diag(d_inv_sqrt)
     L = np.eye(n) - D_inv_sqrt @ A @ D_inv_sqrt
     return L
 
