@@ -52,6 +52,12 @@ Multi-scale conservation ratio mapped to color gradients. Shows the transition f
 ## Installation
 
 ```bash
+pip install -r requirements.txt
+```
+
+or manually:
+
+```bash
 pip install numpy scipy matplotlib pillow
 ```
 
@@ -63,12 +69,40 @@ python generate.py
 
 All output saved to `output/` as PNG files.
 
+## Reproducibility
+
+- **Tradition graphs** (`western`, `gamelan`, `indian`, `jazz`, `african`) are
+  derived deterministically from the tradition name, so a given tradition
+  always yields the same underlying graph across runs and machines.
+- **Generic random-graph galleries** (Erdős-Rényi, Barabási-Albert,
+  small-world, grid) draw from numpy's global RNG without a fixed seed, so
+  re-running `generate.py` produces different art each time. Seed numpy
+  yourself (`numpy.random.seed(...)`) before calling the generators if you
+  need bit-reproducible generic pieces.
+
 ## Mathematical Foundation
 
 - **Normalized Laplacian**: L = I − D^{−1/2} A D^{−1/2}
 - **Conservation Ratio**: σ(x) = 1 / (1 + x^T L x / x^T x)
 - **Rayleigh Quotient**: Measures smoothness of attribute x on graph structure
 - **Spectral Embedding**: Eigenvectors map graph to visual space
+
+The conservation ratio takes values in `[1/3, 1]` for the normalized
+Laplacian (whose spectrum lies in `[0, 2]`); `σ = 1` for a perfectly smooth
+signal and `σ → 1/3` for the most oscillatory one. This bound is covered by
+`tests/test_math.py`.
+
+## Testing
+
+The test suite covers the spectral math (closed-form spot-checks against
+known graphs), graph invariants, color logic, and end-to-end rendering of
+every generator (each rendered PNG is opened and checked to be a valid,
+non-blank image).
+
+```bash
+pip install -r requirements.txt   # includes pytest
+pytest -v
+```
 
 ## License
 
