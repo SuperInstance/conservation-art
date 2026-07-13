@@ -11,11 +11,18 @@ def build_graph(adj_matrix):
 
 
 def laplacian(A):
-    """Compute normalized Laplacian: L = I - D^{-1/2} A D^{-1/2}."""
+    """Compute normalized Laplacian: L = I - D^{-1/2} A D^{-1/2}.
+
+    Isolated nodes (degree 0) are handled safely: their normalized
+    Laplacian row/column is the identity (diagonal 1, off-diagonal 0),
+    which is the standard convention. No divide-by-zero is emitted.
+    """
     d = A.sum(axis=1)
-    d_inv_sqrt = np.where(d > 0, 1.0 / np.sqrt(d), 0)
-    D_inv_sqrt = np.diag(d_inv_sqrt)
     n = A.shape[0]
+    d_inv_sqrt = np.zeros(n, dtype=np.float64)
+    nonzero = d > 0
+    d_inv_sqrt[nonzero] = 1.0 / np.sqrt(d[nonzero])
+    D_inv_sqrt = np.diag(d_inv_sqrt)
     L = np.eye(n) - D_inv_sqrt @ A @ D_inv_sqrt
     return L
 
@@ -86,9 +93,11 @@ def random_graph(n, graph_type='erdos_renyi', p=0.3):
                 degrees[i] += 1
                 degrees[t] += 1
     elif graph_type == 'grid':
-        side = int(np.sqrt(n))
-        n = side * side
-        A = np.zeros((n, n))
+        # Build a square lattice on ceil(sqrt(n)) nodes per side, then trim to
+        # exactly n nodes so the returned matrix honors the requested size.
+        side = int(np.ceil(np.sqrt(n)))
+        total = side * side
+        A = np.zeros((total, total))
         for i in range(side):
             for j in range(side):
                 idx = i * side + j
@@ -98,12 +107,23 @@ def random_graph(n, graph_type='erdos_renyi', p=0.3):
                 if j + 1 < side:
                     A[idx, i * side + j + 1] = 1
                     A[i * side + j + 1, idx] = 1
+        A = A[:n, :n]
     return A
 
 
 def musical_tradition_graph(tradition, n=20):
-    """Generate graphs that mimic properties of different musical traditions."""
-    np.random.seed(hash(tradition) % 2**31)
+    """Generate graphs that mimic properties of different musical traditions.
+
+    The tradition name is hashed deterministically (independent of Python's
+    per-process hash randomization) so the same tradition yields the same
+    graph across runs and machines.
+    """
+    # NOTE: do not use the builtin hash() here — CPython randomizes str hashes
+    # per process (PYTHONHASHSEED), which would make output non-reproducible.
+    seed = 0
+    for ch in tradition:
+        seed = (seed * 131 + ord(ch)) & 0x7FFFFFFF
+    np.random.seed(seed)
     
     if tradition == 'western':
         # Structured, hierarchical - Barabasi-Albert with high clustering
@@ -131,12 +151,14 @@ def musical_tradition_graph(tradition, n=20):
     elif tradition == 'african':
         # Polyrhythmic, interconnected - grid-like with diagonal connections
         A = random_graph(n, 'grid', p=0.3)
-        side = int(np.sqrt(n))
+        side = int(np.ceil(np.sqrt(n)))
         for i in range(side - 1):
             for j in range(side - 1):
                 idx = i * side + j
-                A[idx, (i + 1) * side + j + 1] = 1
-                A[(i + 1) * side + j + 1, idx] = 1
+                tgt = (i + 1) * side + (j + 1)
+                if idx < n and tgt < n:
+                    A[idx, tgt] = 1
+                    A[tgt, idx] = 1
     else:
         A = random_graph(n, 'erdos_renyi', p=0.25)
     

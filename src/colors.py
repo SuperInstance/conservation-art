@@ -26,7 +26,6 @@ def spectral_palette(eigenvalues, conservation):
     
     Each eigenvalue defines a base hue, conservation controls saturation.
     """
-    n = len(eigenvalues)
     palette = []
     for i, ev in enumerate(eigenvalues):
         # Eigenvalue maps to hue (normalized)
